@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\Admin;
 
 class AdminMiddleware
 {
@@ -15,7 +16,7 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Admin::isAdmin(auth()->user()->id)) {
+        if (!Admin::where('user_id', auth()->id())->exists()) {
             abort(403, 'You are not admin!');
         }
 

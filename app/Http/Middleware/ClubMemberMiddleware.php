@@ -17,7 +17,7 @@ class ClubMemberMiddleware
     {
         $club = $request->route('club');
 
-        if ($club->members->contains($user->id)) {
+        if (!$club->members()->where('user_id', auth()->id())->exists()) {
             abort(403, 'You are not a member of this Club!.');
         }
         

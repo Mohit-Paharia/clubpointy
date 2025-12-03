@@ -51,15 +51,15 @@ class RegistrationService {
 
     public function storeData(array $data): Result 
     {
-        
-
         $user = User::create([
             'first_name' => $data['first_name'],
             'last_name'  => $data['last_name'],
             'email'      => $data['email'],
-            'phone'      => $data['phone_number'],
+            'phone_number'      => $data['phone_number'],
             'address'    => $data['address'],
-            'location_id'=> (new Location())->id($data['city'], $data['state'], $data['country']),
+            'country_id' => $data['country'],
+            'state_id'   => $data['state'],
+            'city_id'    => $data['city'],
             'password'   => Hash::make($data['password']),
         ]);
         $data['user'] = $user;
@@ -85,7 +85,7 @@ class RegistrationService {
 
     public function sendEmailVerificationMail(array $data): Result 
     {
-        $url = route('email.verification.url', [ 
+        $url = route('email.verify', [ 
             'token' => $data['token'],
             'email' => $data['user']->email,
         ]);

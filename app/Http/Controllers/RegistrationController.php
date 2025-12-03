@@ -11,7 +11,7 @@ class RegistrationController extends Controller
 {
     public function show(): View
     {
-        return view('authentication.register');
+        return view('auth.register');
     }
 
     public function register(Request $request)
@@ -32,7 +32,7 @@ class RegistrationController extends Controller
             return back()->withErrors(['email' => $result->unwrapErr()]);
 
         
-        return view('authentication.check-email');
+        return view('auth.check-email');
     }
 
     public function verifyEmail(Request $request)
@@ -43,7 +43,7 @@ class RegistrationController extends Controller
         ]);
 
         if ($result->isFailure())
-            return view('authentication.expired-url');
+            return view('auth.expired-url');
         
         Auth::login($result->unwrap()['user']);
         return redirect('/');

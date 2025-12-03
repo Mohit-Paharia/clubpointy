@@ -13,9 +13,12 @@ class SearchController extends Controller
     {
         $query = $request->get("query");
 
-        $clubs = Club::where('name', 'LIKE', "%{$query}%")
-                    ->orWhere('description', 'LIKE', "%{$query}%")
-                    ->get();
+        $clubs = Club::withCount('members')->
+            where(function($q) use ($query) {
+                $q->where('name', 'LIKE', "%{$query}%")
+                  ->orWhere('description', 'LIKE', "%{$query}%");
+            })->get();
+
 
         return response()->json($clubs);
     }
@@ -24,11 +27,12 @@ class SearchController extends Controller
     {
         $query = $request->get("query");
 
-        $users = User::where('first_name', 'LIKE', "%{$query}%")
-                    ->orWhere('last_name', 'LIKE', "%{$query}%")
-                    ->orWhere('id', 'LIKE', "%{$query}%" )
-                    ->orWhere('email', 'LIKE', "%{$query}%")
-                    ->get();
+        $users = User::where(function($q) use ($query) {
+                $q->where('first_name', 'LIKE', "%{$query}%")
+                  ->orWhere('last_name', 'LIKE', "%{$query}%")
+                  ->orWhere('id', 'LIKE', "%{$query}%")
+                  ->orWhere('email', 'LIKE', "%{$query}%");
+            })->get();
 
         return response()->json($users);
     }
@@ -37,10 +41,12 @@ class SearchController extends Controller
     {
         $query = $request->get("query");
 
-        $events = Event::where('name', 'LIKE', "%{$query}%")
-                    ->orWhere('description', 'LIKE', "%{$query}%")
-                    ->get();
-                    
+        $events = Event::with('club:id,name')
+            ->where(function($q) use ($query) {
+                $q->where('name', 'LIKE', "%{$query}%")
+                  ->orWhere('description', 'LIKE', "%{$query}%");
+            })->get();
+
         return response()->json($events);
     }
 }
