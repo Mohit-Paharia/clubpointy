@@ -50,7 +50,8 @@ class StateSeeder extends Seeder
         DB::commit();
         fclose($file);
 
-        DB::statement('PRAGMA foreign_keys = ON;');
-        // DB::statement('SET FOREIGN_KEY_CHECKS=1;'); // MySQL
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement("PRAGMA foreign_keys = OFF;");
+        }
     }
 }
