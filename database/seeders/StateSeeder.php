@@ -10,7 +10,9 @@ class StateSeeder extends Seeder
     public function run(): void
     {
         DB::disableQueryLog();
-        DB::statement('PRAGMA foreign_keys = OFF;'); // SQLite
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement("PRAGMA foreign_keys = OFF;");
+        }
         // DB::statement('SET FOREIGN_KEY_CHECKS=0;'); // MySQL
 
         $path = database_path('seeders/data/states.csv');
