@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -11,6 +12,7 @@ use App\Models\User;
 use App\Models\Location;
 use App\Support\Result;
 use App\Mail\EmailVerificationMail;
+use Log;
 
 class RegistrationService {
 
@@ -90,7 +92,12 @@ class RegistrationService {
             'email' => $data['user']->email,
         ]);
 
-        Mail::to($data['user']->email)->send(new EmailVerificationMail($url));
+        try {
+            Mail::to($data['user']->email)->send(new EmailVerificationMail($url));
+        } catch(Exception $e) {
+            Log::error("MAIL ERROR: " . $e->getMessage());
+            return Result::failure($e->getMessage());
+        }
 
         return Result::success($data);
     }
