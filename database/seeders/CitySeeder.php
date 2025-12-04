@@ -10,17 +10,16 @@ class CitySeeder extends Seeder
     public function run(): void
     {
         DB::disableQueryLog();
+
+        // Disable foreign key checks only on SQLite
         if (DB::getDriverName() === 'sqlite') {
-            DB::statement("PRAGMA foreign_keys = OFF;");
+            DB::statement('PRAGMA foreign_keys = OFF;');
         }
-        // DB::statement('SET FOREIGN_KEY_CHECKS=0;'); // MySQL
 
         $path = database_path('seeders/data/cities.csv');
         $file = fopen($path, 'r');
 
         $first = true;
-        $batch = [];
-        $batchSize = 1000; // upsert 1000 at once
 
         DB::beginTransaction();
 
@@ -31,40 +30,26 @@ class CitySeeder extends Seeder
                 continue;
             }
 
-            $batch[] = [
-                'name'       => $row[1],
-                'state_id'   => $row[2],
-                'country_id' => $row[5],
-                'lat'        => $row[8],
-                'lng'        => $row[9],
-            ];
-
-            if (count($batch) >= $batchSize) {
-                DB::table('cities')->upsert(
-                    $batch,
-                    ['name', 'state_id', 'country_id'], // UNIQUE keys
-                    ['lat', 'lng']                      // fields to update
-                );
-                $batch = [];
-            }
-        }
-
-        // Final batch
-        if (!empty($batch)) {
-            DB::table('cities')->upsert(
-                $batch,
-                ['name', 'state_id', 'country_id'], 
-                ['lat', 'lng']
+            DB::table('cities')->updateOrInsert(
+                [
+                    // Conflict key — safest one is the ID from CSV if present.
+                    'id' => $row[0], 
+                ],
+                [
+                    'name'       => $row[1],
+                    'state_id'   => $row[2],
+                    'country_id' => $row[5],
+                    'lat'        => $row[8],
+                    'lng'        => $row[9],
+                ]
             );
         }
 
         DB::commit();
-
         fclose($file);
 
         if (DB::getDriverName() === 'sqlite') {
-            DB::statement("PRAGMA foreign_keys = OFF;");
+            DB::statement('PRAGMA foreign_keys = ON;');
         }
-        // DB::statement('SET FOREIGN_KEY_CHECKS=1;'); // MySQL
     }
 }
