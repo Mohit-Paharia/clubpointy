@@ -10,7 +10,9 @@ class CitySeeder extends Seeder
     public function run(): void
     {
         DB::disableQueryLog();
-        DB::statement('PRAGMA foreign_keys = OFF;'); // SQLite
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement("PRAGMA foreign_keys = OFF;");
+        }
         // DB::statement('SET FOREIGN_KEY_CHECKS=0;'); // MySQL
 
         $path = database_path('seeders/data/cities.csv');
@@ -60,7 +62,9 @@ class CitySeeder extends Seeder
 
         fclose($file);
 
-        DB::statement('PRAGMA foreign_keys = ON;');
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement("PRAGMA foreign_keys = OFF;");
+        }
         // DB::statement('SET FOREIGN_KEY_CHECKS=1;'); // MySQL
     }
 }
