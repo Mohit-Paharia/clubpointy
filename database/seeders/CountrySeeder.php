@@ -21,8 +21,8 @@ class CountrySeeder extends Seeder
             DB::table('countries')->insert([
                 'id'        => $row[0],
                 'name'      => $row[1],
-                'iso2'      => $row[2],
-                'iso3'      => $row[3],
+                'iso2'      => $row[3],
+                'iso3'      => $row[2],
             ]);
         }
 
