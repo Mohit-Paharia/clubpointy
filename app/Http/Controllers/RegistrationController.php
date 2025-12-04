@@ -32,7 +32,7 @@ class RegistrationController extends Controller
             return back()->withErrors(['email' => $result->unwrapErr()]);
 
         
-        return view('auth.check-email');
+        return redirect()->route('check-email');
     }
 
     public function verifyEmail(Request $request)
@@ -43,7 +43,7 @@ class RegistrationController extends Controller
         ]);
 
         if ($result->isFailure())
-            return view('auth.expired-url');
+            return redirect()->route('expired-url');
         
         Auth::login($result->unwrap()['user']);
         return redirect('/');

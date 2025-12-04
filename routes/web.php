@@ -79,6 +79,8 @@ Route::prefix('auth')->group(function () {
     Route::get('/register',          [RegistrationController::class, 'show'])->name('register.show');
     Route::post('/register',         [RegistrationController::class, 'register'])->name('register.perform');
     Route::get('/register/verify',   [RegistrationController::class, 'verifyEmail'])->name('email.verify');
+    Route::get('/check-mail', fn (Request $request) => view('auth.check-email'))->name('check-email');
+    Route::get('/expired-url', fn (Request $request) => view('auth.expired-url'))->name('expired-url');
 });
 
 
