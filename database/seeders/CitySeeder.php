@@ -11,14 +11,12 @@ class CitySeeder extends Seeder
     {
         DB::disableQueryLog();
 
-        // Disable foreign key checks only on SQLite
         if (DB::getDriverName() === 'sqlite') {
-            DB::statement('PRAGMA foreign_keys = OFF;');
+            DB::statement("PRAGMA foreign_keys = OFF;");
         }
 
         $path = database_path('seeders/data/cities.csv');
         $file = fopen($path, 'r');
-
         $first = true;
 
         DB::beginTransaction();
@@ -32,15 +30,15 @@ class CitySeeder extends Seeder
 
             DB::table('cities')->updateOrInsert(
                 [
-                    // Conflict key — safest one is the ID from CSV if present.
-                    'id' => $row[0], 
+                    // MUST MATCH YOUR UNIQUE INDEX:
+                    'country_id' => $row[5],
+                    'state_id'   => $row[2],
+                    'name'       => $row[1],
                 ],
                 [
-                    'name'       => $row[1],
-                    'state_id'   => $row[2],
-                    'country_id' => $row[5],
-                    'lat'        => $row[8],
-                    'lng'        => $row[9],
+                    'id'  => $row[0],  // set ID only on insert
+                    'lat' => $row[8],
+                    'lng' => $row[9],
                 ]
             );
         }
@@ -49,7 +47,7 @@ class CitySeeder extends Seeder
         fclose($file);
 
         if (DB::getDriverName() === 'sqlite') {
-            DB::statement('PRAGMA foreign_keys = ON;');
+            DB::statement("PRAGMA foreign_keys = ON;");
         }
     }
 }
