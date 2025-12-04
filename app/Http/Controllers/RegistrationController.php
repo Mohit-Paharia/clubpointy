@@ -29,12 +29,7 @@ class RegistrationController extends Controller
         ]);
 
         if ($result->isFailure())
-            return redirect()->route('register.show')
-                ->withErrors([
-                    'email' => is_array($result->unwrapErr())
-                        ? implode(', ', $result->unwrapErr())
-                        : $result->unwrapErr()
-                ]);
+            return redirect()->route('register.show')->withErrors(['email' => (string) $result->unwrapErr()]);
 
         
         return redirect('/auth/check-email');
