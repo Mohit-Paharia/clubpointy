@@ -13,6 +13,7 @@ use App\Models\Location;
 use App\Support\Result;
 use App\Mail\EmailVerificationMail;
 use Log;
+use App\Services\MailtrapService;
 
 class RegistrationService {
 
@@ -93,13 +94,14 @@ class RegistrationService {
         ]);
 
         try {
-            Mail::to($data['user']->email)->send(new EmailVerificationMail($url));
-        } catch(Exception $e) {
-            Log::error("MAIL ERROR: " . $e->getMessage());
-            return Result::failure($e->getMessage());
-        }
+            $service = new MailtrapService();
+            $service->sendVerificationMail($data['user']->email, $url);
 
-        return Result::success($data);
+            return Result::success('Email sent');
+        } catch (Exception $e) {
+            Log::error("MAILTRAP ERROR: " . $e->getMessage());
+            return Result::failure('Could not send email');
+        }
     }
 
     public function validateToken(array $data): Result
