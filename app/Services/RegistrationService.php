@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Location;
 use App\Support\Result;
-use App\Mail\EmailVerificationMail;
+// use App\Mail\EmailVerificationMail;
 use Log;
 use App\Services\MailtrapService;
 
